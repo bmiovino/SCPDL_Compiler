@@ -25,6 +25,25 @@
             LOOP X:5 BEGIN
 
             LOOP X END
+
+            TRUTH_TABLE A [IN0,IN1,IN2,IN3:OUT1,OUT2] BEGIN
+                0.0.1.1:0.1
+                0.1.1.0:1.1
+                X.X.X.X:0.0
+            END TRUTH_TABLE
+
+            FSM A
+
+                STATE[1]:
+                    OUT1 = IN1;
+                    TRANSISTION[CLK-LOW->HIGH,IN0-LOW->HIGH]->STATE[2];
+                STATE[2]:
+                    OUT2 = IN2;
+                    RELEASE-RETURN; //allow the loop to run other logic, save state and return.
+                    RELEASE-RESET->STATE[1]; //allow the loop to run other logic and the reset to state 1
+            END FSM A
+
+
         END MAIN*/
 
         //assignment regex
