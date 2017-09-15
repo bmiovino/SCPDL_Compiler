@@ -1,11 +1,25 @@
-﻿namespace SCPLD_Compiler
+﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
+
+namespace SCPLD_Compiler
 {
     public class Method
     {
         public string Name;
         protected string[] lines;
         protected Wire[] wires; //internal to method
-        protected Command[] commands;
+        protected List<Command> commands;
+
+        List<CommandRegex> regexs;
+
+        public Method()
+        {
+            regexs = new List<CommandRegex>()
+                {
+                    new CommandRegex(Command.CommandType.Assignment, new Regex(@"([a-zA-Z0-9]*)\s+=\s+(.*);") ),
+                    new CommandRegex(Command.CommandType.Wait, new Regex(@"(WAIT)\s*(\d*)\s*(ms|s);") )
+                }; //in order of operation
+        }
 
         /*
          * 
@@ -45,15 +59,36 @@
 
 
         END MAIN*/
-
-        //assignment regex
-
+        
         public void Parse(string name, string[] lines)
         {
             this.Name = name;
             this.lines = lines;
 
+            commands = new List<Command>();
+
             //parse each one
+            foreach (var line in lines)
+                foreach(CommandRegex cr in regexs)
+                    if (ParseLine(cr, line))
+                        break;
+        }
+
+        bool ParseLine(CommandRegex cr, string line)
+        {
+            if(cr.RegularExpression.IsMatch(line))
+            {
+                var match = cr.RegularExpression.Match(line);
+                var command = new Command();
+                command.Type = cr.Type;
+                command.Parameters = new string[match.Groups.Count];
+                for (int i = 0; i < match.Groups.Count; i++)
+                    command.Parameters[i] = match.Groups[i].Value;
+                commands.Add(command);
+                return true;
+            }
+
+            return false;
         }
 
         //regex for each line type
