@@ -1,0 +1,43 @@
+﻿PIN 1 IN = IN0;
+PIN 2 IN = IN2;
+PIN 3 IN = IN3;
+PIN 4 IN = IN4;
+PIN 5 IN = IN5;
+PIN 6 IN = IN6;
+PIN 7 IN = IN7;
+PIN 8 IN = IN8;
+PIN 9 OUT = OUT0;
+PIN 20 OUT = OUT1;
+PIN 21 CLK = CLK0;
+PIN 22 CLK = CLK1; //comment
+
+WIRE W0;
+
+//comment
+MAIN
+	OUT0 = (IN0&IN1&IN2&IN3&IN4&IN5);	
+	WAIT 10ms;
+	[CLK0-LOW->HIGH]:OUT1 = OUT0 & IN8;
+	[CLK0-HIGH->LOW]:OUT1 = LOW;
+	W0=OUT1;
+	CALL:SUBROUTINE0;
+END MAIN
+
+SUBROUTINE0
+	WHILE(IN6==LOW)
+	{
+		
+	}
+END SUBROUTINE0
+	
+
+
+setup()
+{
+	
+}	
+	
+loop()
+{
+	
+}
