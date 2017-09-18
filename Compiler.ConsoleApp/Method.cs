@@ -8,8 +8,9 @@ namespace Compiler.ConsoleApp
     {
         public string Name = "NOTSET";
         public string[] Lines = new string[] { };
-        public Wire[] wires; //internal to method
-        public List<Command> commands;
+        public Wire[] Wires; //internal to method
+        public Pin[] Pins; //interface to external pins
+        public List<Command> Commands;
 
         List<CommandRegex> regexs;
 
@@ -66,7 +67,7 @@ namespace Compiler.ConsoleApp
 
         public void Parse()
         {
-            commands = new List<Command>();
+            Commands = new List<Command>();
 
             //parse each one
             foreach (var line in Lines)
@@ -85,20 +86,52 @@ namespace Compiler.ConsoleApp
                 command.Parameters = new string[match.Groups.Count - 1];
                 for (int i = 1; i < match.Groups.Count; i++)
                     command.Parameters[i - 1] = match.Groups[i].Value;
-                commands.Add(command);
+                Commands.Add(command);
                 return true;
             }
 
             return false;
         }
 
-        //regex for each line type
-        //assignment
-        //wait
-        //signal transistion - with assignment and boolean.
-        //block
+        /// <summary>
+        /// looking at all assignment and conditional expression terms, set the list of all that
+        /// exist in this method block and determine which are pins and which are wires.
+        /// </summary>
+        /// <param name="pins"></param>
+        public void SetPinsAndWires(Pin[] pins)
+        {
+            var commands = (from c in Commands where c.Type == Command.CommandType.Assignment select c).ToList();
 
-        public string ToCode()
+            var terms = new HashSet<string>();
+
+            var wires = new List<Wire>();
+
+            var tpins = new List<Pin>();
+
+            commands.ForEach(c => {
+                for(int i = 0; i < c.Parameters.Length; i++)
+                {
+                    var match = Compiler.rx_terms.Match(c.Parameters[i]);
+                    for(int j= 0; j < match.Groups.Count; j++)
+                        if (!terms.Contains(match.Groups[j].Value))
+                            terms.Add(match.Groups[j].Value);
+                }
+            });
+
+            foreach(var term in terms)
+            {
+                var pin = pins.FirstOrDefault(p => { return p.Name == term; });
+                if (pin == null)
+                    wires.Add(new Wire() { Name = term });
+                else
+                    tpins.Add(pin);
+            }
+
+            Wires = wires.ToArray();
+            Pins = tpins.ToArray();
+        }
+        
+        public string ToCode(Compiler.TargetFrameworkEnum target)
         {
             return "";
         }
