@@ -133,7 +133,27 @@ namespace Compiler.ConsoleApp
         
         public string ToCode(Compiler.TargetFrameworkEnum target)
         {
-            return "";
+            string c =  $"void fn_{Name}(){{\r\n";
+            
+            //gather all inputs - readvalues to create variables.
+            foreach(var inPin in Pins.Where(p=> p.Direction == Pin.DirectionEnum.In).ToArray())
+                c += $"{inPin.Name}_localvar = digitalRead({inPin.Name});\r\n";
+            
+            //all assignments -> create variables
+            //find all unqiue assignment variables
+            //create them here
+
+            //perform all assignments
+            foreach(var command in Commands.Where(cm => cm.Type == Command.CommandType.Assignment).ToArray())
+                c += $"//{command.Parameters[0]}_localvar = [expand all variables to _localvar expression]\r\n";
+            
+            //write all outputs
+            foreach(var outPin in Pins.Where(p => p.Direction == Pin.DirectionEnum.Out).ToArray())
+                c += $"digitalWrite({outPin.Name}, {outPin.Name}_localvar);\r\n";
+            
+            c += "}\r\n";
+
+            return c;
         }
 
 

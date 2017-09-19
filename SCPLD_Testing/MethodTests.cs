@@ -12,7 +12,7 @@ namespace SCPLD_Testing
         public void MethodExtractTest()
         {
             string[] lines = {
-                "MAIN BEGIN",
+                "BEGIN MAIN",
                 "   OUT1 = IN1;",
                 "END MAIN"
             };
@@ -29,7 +29,7 @@ namespace SCPLD_Testing
         public void MethodExtractParse()
         {
             string[] lines = {
-                "MAIN BEGIN",
+                "BEGIN MAIN",
                 "   OUT1 = IN1;",
                 "END MAIN"
             };
@@ -53,7 +53,7 @@ namespace SCPLD_Testing
         public void MethodSetPinsAndWires()
         {
             string[] lines = {
-                "MAIN BEGIN",
+                "BEGIN MAIN",
                 "   WIRE1 = IN2;",
                 "   OUT1 = IN1;",
                 "   WIRE2 = IN1&IN2;",
@@ -85,6 +85,34 @@ namespace SCPLD_Testing
             var wnames = method.Wires.Select(w => { return w.Name; }).ToArray();
 
             CollectionAssert.AreEquivalent(twires, wnames);
+
+        }
+
+
+        [TestMethod]
+        public void MethodToCode()
+        {
+            string[] lines = {
+                "BEGIN MAIN",
+                "   WIRE1 = IN2;",
+                "   OUT1 = IN1;",
+                "   WIRE2 = IN1&IN2;",
+                "END MAIN"
+            };
+
+            var method = Method.Extract("MAIN", lines);
+
+            method.Parse();
+
+            method.SetPinsAndWires(new Pin[]
+            {
+                new Pin() { Name = "IN1", Direction = Pin.DirectionEnum.In },
+                new Pin() { Name = "IN2", Direction = Pin.DirectionEnum.In },
+                new Pin() { Name = "OUT1", Direction = Pin.DirectionEnum.Out },
+                new Pin() { Name = "OUT2", Direction = Pin.DirectionEnum.Out }
+            });
+
+            var code = method.ToCode(Compiler.ConsoleApp.Compiler.TargetFrameworkEnum.ARV);
 
         }
     }

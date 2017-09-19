@@ -11,13 +11,18 @@ namespace Compiler.ConsoleApp
 
         public Clock[] Clocks;
 
+        public Wire[] Wires;
+
         public Method[] Methods;
 
         public void Compile(string code)
         {
             var lines = code.Split(new[] { '\r', '\n' });
 
-
+            for(int i = 0; i < lines.Length; i++)
+            {
+                
+            }
         }
         
         Regex rx_pin = new Regex(@"(PIN)\s(\d*)\s(IN|OUT|CLK)\s*=\s*(.*);", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
