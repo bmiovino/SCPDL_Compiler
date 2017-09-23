@@ -56,7 +56,7 @@ namespace SCPLD_Testing
                 "BEGIN MAIN",
                 "   WIRE1 = IN2;",
                 "   OUT1 = IN1;",
-                "   WIRE2 = IN1&IN2;",
+                "   WIRE2 = IN1 & IN2;",
                 "END MAIN"
             };
 
@@ -115,5 +115,27 @@ namespace SCPLD_Testing
             var code = method.ToCode(Compiler.ConsoleApp.Compiler.TargetFrameworkEnum.ARV);
 
         }
+
+        [TestMethod]
+        public void CompileToCode()
+        {
+            string code =
+                "PIN 1 IN = IN1;\r\n" +
+                "PIN 2 OUT = OUT1;\r\n" +
+                "PIN 3 IN = IN2;\r\n" +
+                "\r\n" +
+                "BEGIN MAIN\r\n" +
+                "WIRE1 = IN2;\r\n" +
+                "OUT1 = IN1;\r\n" +
+                "WIRE2 = IN1&IN2;\r\n" +
+                "END MAIN";
+            
+            Compiler.ConsoleApp.Compiler C = new Compiler.ConsoleApp.Compiler();
+
+            C.Compile(code, Compiler.ConsoleApp.Compiler.TargetFrameworkEnum.ARV);
+
+            var x = C.Code;
+        }
+
     }
 }

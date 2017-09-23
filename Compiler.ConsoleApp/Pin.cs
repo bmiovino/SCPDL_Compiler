@@ -8,6 +8,12 @@ namespace Compiler.ConsoleApp
     { 
         public string Name;
         public DirectionEnum Direction;
+        public int Number;
+
+        public string ToDirection()
+        {
+            return Direction == DirectionEnum.In ? "INPUT" : "OUTPUT";
+        }
 
         public bool Equals(Pin other)
         {
