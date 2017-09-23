@@ -39,8 +39,12 @@ namespace Compiler.ConsoleApp
 
         private void GenerateCode(TargetFrameworkEnum target)
         {
-            foreach(var pin in Pins)
-                Code += $"#define {pin.Name} {pin.Number};\r\n";
+            Code += @"/*****************************************************************/" + "\r\n";
+            Code += $"// {DateTime.Now} - BMI - SCPDL Compiler v1.0" + "\r\n";
+            Code += @"/*****************************************************************/" + "\r\n";
+            
+            foreach (var pin in Pins)
+                Code += $"#define {pin.Name} {pin.Number}\r\n";
 
             foreach (var wire in Wires)
                 Code += $"int {wire.Name}_globalvar";
@@ -51,7 +55,7 @@ namespace Compiler.ConsoleApp
                 Code += $"\tpinMode({pin.Name},{pin.ToDirection()});\r\n";
             Code += "}\r\n\r\n";
 
-            Code += $"void loop(){{\r\n\r\n";
+            Code += $"void loop(){{\r\n";
             foreach (var method in Methods)
                 Code += $"\tfn_{method.Name}();\r\n";
             Code += "}\r\n\r\n";

@@ -137,7 +137,7 @@ namespace Compiler.ConsoleApp
             
             //gather all inputs - readvalues to create variables.
             foreach(var inPin in Pins.Where(p=> p.Direction == Pin.DirectionEnum.In).ToArray())
-                c += $"\t{inPin.Name}_localvar = digitalRead({inPin.Name});\r\n";
+                c += $"\tint {inPin.Name}_localvar = digitalRead({inPin.Name});\r\n";
 
             //all assignments -> create variables
             //find all unqiue assignment variables

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SCPLD_Testing", "SCPLD_Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compiler.ConsoleApp", "Compiler.ConsoleApp\Compiler.ConsoleApp.csproj", "{A3A2D835-D254-4E4B-978B-A3CB8BBFC9FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompilerWinFormApp", "CompilerWinFormApp\CompilerWinFormApp.csproj", "{56EF2998-CFED-46AD-B084-F0F46372A694}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{A3A2D835-D254-4E4B-978B-A3CB8BBFC9FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3A2D835-D254-4E4B-978B-A3CB8BBFC9FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3A2D835-D254-4E4B-978B-A3CB8BBFC9FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56EF2998-CFED-46AD-B084-F0F46372A694}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56EF2998-CFED-46AD-B084-F0F46372A694}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56EF2998-CFED-46AD-B084-F0F46372A694}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56EF2998-CFED-46AD-B084-F0F46372A694}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
