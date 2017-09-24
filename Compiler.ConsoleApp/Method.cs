@@ -10,7 +10,9 @@ namespace Compiler.ConsoleApp
         public string[] Lines = new string[] { };
         public Wire[] Wires; //internal to method
         public Pin[] Pins; //interface to external pins
-        public List<Command> Commands;
+        public List<Command> Commands = new List<Command>();
+        public List<TruthTable> TruthTables = new List<TruthTable>();
+        public int LineNumber = 0;
 
         List<CommandRegex> regexs;
 
@@ -20,6 +22,7 @@ namespace Compiler.ConsoleApp
                 {
                     new CommandRegex(Command.CommandType.Assignment, new Regex(@"([a-zA-Z0-9]*)\s+=\s+(.*);") ),
                     new CommandRegex(Command.CommandType.Wait, new Regex(@"(WAIT)\s*(\d*)\s*(ms|s);") ),
+                    new CommandRegex(Command.CommandType.TruthTable, new Regex(@"(TRUTH\s+TABLE)\s+\[(.*):(.*)\]")),
                     new CommandRegex(Command.CommandType.BlockScope, new Regex(@"(BEGIN|END)") ),
                     new CommandRegex(Command.CommandType.EmptyLine, new Regex(@"\s*") )
 
@@ -45,12 +48,6 @@ namespace Compiler.ConsoleApp
 
             LOOP X END
 
-            TRUTH_TABLE A [IN0,IN1,IN2,IN3:OUT1,OUT2] BEGIN
-                0.0.1.1:0.1
-                0.1.1.0:1.1
-                X.X.X.X:0.0
-            END TRUTH_TABLE
-
             FSM A
 
                 STATE[1]:
@@ -70,9 +67,9 @@ namespace Compiler.ConsoleApp
             Commands = new List<Command>();
 
             //parse each one
-            foreach (var line in Lines)
+            for(LineNumber = 0; LineNumber < Lines.Length; LineNumber++)
                 foreach (CommandRegex cr in regexs)
-                    if (ParseLine(cr, line))
+                    if (ParseLine(cr, Lines[LineNumber]))
                         break;
         }
 
@@ -86,13 +83,14 @@ namespace Compiler.ConsoleApp
                 command.Parameters = new string[match.Groups.Count - 1];
                 for (int i = 1; i < match.Groups.Count; i++)
                     command.Parameters[i - 1] = match.Groups[i].Value;
+                LineNumber = command.BlockParse(LineNumber, Lines); //if command is a block command
                 Commands.Add(command);
                 return true;
             }
 
             return false;
         }
-
+        
         /// <summary>
         /// looking at all assignment and conditional expression terms, set the list of all that
         /// exist in this method block and determine which are pins and which are wires.
@@ -100,6 +98,7 @@ namespace Compiler.ConsoleApp
         /// <param name="pins"></param>
         public void SetPinsAndWires(Pin[] pins)
         {
+            #region #------------------- Scan Assignments -----------------------------#
             var commands = (from c in Commands where c.Type == Command.CommandType.Assignment select c).ToList();
 
             var terms = new HashSet<string>();
@@ -127,6 +126,34 @@ namespace Compiler.ConsoleApp
                     tpins.Add(pin);
             }
 
+            #endregion
+
+            #region #------------------  Scan all other command children classes -----------------------#
+
+            commands = (from c in Commands where c.Type == Command.CommandType.TruthTable //|| other command types
+                        select c).ToList();
+
+            foreach(var command in commands)
+            {
+                var res = command.FindPinsAndWires(pins);
+
+                foreach(var pin in res.Item1)
+                {
+                    var foundPin = (from p in tpins where p.Name == pin.Name select p).FirstOrDefault();
+                    if(foundPin == null)
+                        tpins.Add(foundPin);
+                }
+
+                foreach (var wire0 in res.Item2)
+                {
+                    var foundWire = (from w in wires where w.Name == wire0.Name select w).FirstOrDefault();
+                    if (foundWire == null)
+                        wires.Add(foundWire);
+                }
+            }
+
+            #endregion
+
             Wires = wires.ToArray();
             Pins = tpins.ToArray();
         }
@@ -151,9 +178,13 @@ namespace Compiler.ConsoleApp
             //perform all assignments
             foreach (var command in Commands.Where(cm => cm.Type == Command.CommandType.Assignment).ToArray())
                 c += $"\t{command.Parameters[0]}_localvar = {ToLocalVariables(command.Parameters[1])};\r\n";
-            
+
+            //perform all others --> add them as developed here
+            foreach (var command in Commands.Where(cm => cm.Type == Command.CommandType.TruthTable).ToArray())
+                c += $"\t{command.Parameters[0]}_localvar = {ToLocalVariables(command.Parameters[1])};\r\n";
+
             //write all outputs
-            foreach(var outPin in Pins.Where(p => p.Direction == Pin.DirectionEnum.Out).ToArray())
+            foreach (var outPin in Pins.Where(p => p.Direction == Pin.DirectionEnum.Out).ToArray())
                 c += $"\tdigitalWrite({outPin.Name}, {outPin.Name}_localvar);\r\n";
             
             c += "}\r\n";
