@@ -108,7 +108,7 @@ namespace Compiler.ConsoleApp
             return code;
         }
 
-        private string Assignment(string v)
+        public string Assignment(string v)
         {
             var code = "";
 
@@ -128,7 +128,7 @@ namespace Compiler.ConsoleApp
             return code;
         }
 
-        private string CodeCondition(string v)
+        public string CodeCondition(string v)
         {
             var code = "";
 
