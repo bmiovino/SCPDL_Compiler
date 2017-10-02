@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 
 namespace Compiler.ConsoleApp
 {
@@ -13,7 +14,35 @@ namespace Compiler.ConsoleApp
             Assignment,
             Wait,
             BlockScope,
-            EmptyLine
+            EmptyLine,
+            TruthTable
+        }
+
+        public virtual int BlockParse(int lineNumber, string[] lines)
+        {
+            //process additional lines - inherit from command and override
+            return lineNumber;
+        }
+
+        public virtual Tuple<Pin[], Wire[]> FindPinsAndWires(Pin[] pins)
+        {
+            return new Tuple<Pin[], Wire[]>(new Pin[] { }, new Wire[] { });
+        }
+
+        public virtual string ToCode()
+        {
+            return "";
+        }
+
+        public static Command Factory(CommandType commandType)
+        {
+            switch(commandType)
+            {
+                case CommandType.TruthTable:
+                    return new TruthTable();
+                default:
+                    return new Command();
+            }
         }
     }
 
@@ -21,6 +50,7 @@ namespace Compiler.ConsoleApp
     {
         public Command.CommandType Type;
         public Regex RegularExpression;
+        public bool Skip = false;
 
         public CommandRegex(Command.CommandType type, Regex regex)
         {

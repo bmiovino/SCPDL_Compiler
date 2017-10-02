@@ -110,7 +110,7 @@ namespace Compiler.ConsoleApp
 
         Regex rx_pin = new Regex(@"(PIN)\s(\d*)\s(IN|OUT|CLK)\s*=\s*(.*);", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
         Regex rx_wire = new Regex(@"(WIRE)\s(.*);", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
-        Regex rx_method_start = new Regex(@"BEGIN\s+(.*)", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
+        Regex rx_method_start = new Regex(@"^BEGIN\s+(.*)", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
         
         public static Regex rx_comment = new Regex(@"\s+\/\/.*", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
         public static Regex rx_terms = new Regex(@"([A-Z0-9]+)", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
