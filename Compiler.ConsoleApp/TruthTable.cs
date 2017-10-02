@@ -89,24 +89,26 @@ namespace Compiler.ConsoleApp
 
         public override string ToCode()
         {
-            var code = "//Truth Table\r\n\r\n";
+            var code = "\r\n\t//Truth Table\r\n";
 
             for(int i = 0; i < mappingLines.Count; i++)
             {
                 if (i > 0)
-                    code += "else ";
+                    code += "\telse ";
+                else
+                    code += "\t";
 
                 code += "if (" + CodeCondition(mappingLines[i]) + ") {\r\n";
                 code += Assignment(mappingLines[i]);
-                code += "}\r\n";
+                code += "\t}\r\n";
             }
 
-            code += "else {\r\n";
+            code += "\telse {\r\n";
 
             if (defaultLine != null)
                 code += Assignment(defaultLine);
 
-            code += "}\r\n\r\n";
+            code += "\t}\r\n\r\n";
 
             return code;
         }
@@ -123,7 +125,7 @@ namespace Compiler.ConsoleApp
             {
                 var assignment = i.Trim();
 
-                code += "\t" + Outputs[c] + "_localvar = " + assignment + ";\r\n";
+                code += "\t\t" + Outputs[c] + "_localvar = " + assignment + ";\r\n";
 
                 c++;
             }

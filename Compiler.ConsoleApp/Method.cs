@@ -183,13 +183,13 @@ namespace Compiler.ConsoleApp
 
             //perform all others --> add them as developed here
             foreach (var command in Commands.Where(cm => cm.Type == Command.CommandType.TruthTable).ToArray())
-                c += $"\t{command.Parameters[0]}_localvar = {ToLocalVariables(command.Parameters[1])};\r\n";
+                c += command.ToCode();
 
             //write all outputs
             foreach (var outPin in Pins.Where(p => p.Direction == Pin.DirectionEnum.Out).ToArray())
                 c += $"\tdigitalWrite({outPin.Name}, {outPin.Name}_localvar);\r\n";
             
-            c += "}\r\n";
+            c += "}\r\n\r\n";
 
             return c;
         }

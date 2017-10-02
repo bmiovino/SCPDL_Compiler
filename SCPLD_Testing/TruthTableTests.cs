@@ -23,7 +23,7 @@ namespace SCPLD_Testing
 
             var code = T.Assignment("0,0,0,1:1,0");
 
-            Assert.AreEqual("\tOUT1_localvar = 1;\r\n" + "\tOUT2_localvar = 0;\r\n", code);
+            Assert.AreEqual("\t\tOUT1_localvar = 1;\r\n" + "\t\tOUT2_localvar = 0;\r\n", code);
         }
 
         [TestMethod]
