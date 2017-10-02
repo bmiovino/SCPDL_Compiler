@@ -33,12 +33,24 @@ namespace Compiler.ConsoleApp
         {
             return "";
         }
+
+        public static Command Factory(CommandType commandType)
+        {
+            switch(commandType)
+            {
+                case CommandType.TruthTable:
+                    return new TruthTable();
+                default:
+                    return new Command();
+            }
+        }
     }
 
     public class CommandRegex
     {
         public Command.CommandType Type;
         public Regex RegularExpression;
+        public bool Skip = false;
 
         public CommandRegex(Command.CommandType type, Regex regex)
         {

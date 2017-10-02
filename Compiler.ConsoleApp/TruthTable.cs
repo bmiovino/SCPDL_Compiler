@@ -56,12 +56,15 @@ namespace Compiler.ConsoleApp
                 {
                     var match = truthtable_line.Match(lines[lineNumber]);
 
-                    var ins = match.Groups[1].Value.Trim();
-                    
-                    if(ins.ToLower() == "default")
-                        defaultLine = lines[lineNumber];
-                    else
-                        mappingLines.Add(lines[lineNumber]);
+                    if (match.Success)
+                    {
+                        var ins = match.Groups[1].Value.Trim();
+
+                        if (ins.ToLower() == "default")
+                            defaultLine = lines[lineNumber];
+                        else
+                            mappingLines.Add(lines[lineNumber]);
+                    }
                 }
 
                 lineNumber++;

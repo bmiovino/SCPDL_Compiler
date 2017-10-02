@@ -23,9 +23,8 @@ namespace Compiler.ConsoleApp
                     new CommandRegex(Command.CommandType.Assignment, new Regex(@"([a-zA-Z0-9]*)\s+=\s+(.*);") ),
                     new CommandRegex(Command.CommandType.Wait, new Regex(@"(WAIT)\s*(\d*)\s*(ms|s);") ),
                     new CommandRegex(Command.CommandType.TruthTable, new Regex(@"(TRUTH\s+TABLE)\s+\[(.*):(.*)\]")),
-                    new CommandRegex(Command.CommandType.BlockScope, new Regex(@"(BEGIN|END)") ),
-                    new CommandRegex(Command.CommandType.EmptyLine, new Regex(@"\s*") )
-
+                    new CommandRegex(Command.CommandType.BlockScope, new Regex(@"(BEGIN|END)")){Skip = true },
+                    new CommandRegex(Command.CommandType.EmptyLine, new Regex(@"\s*")){ Skip = true }
                 }; //in order of operation
         }
 
@@ -77,14 +76,17 @@ namespace Compiler.ConsoleApp
         {
             if (cr.RegularExpression.IsMatch(line))
             {
-                var match = cr.RegularExpression.Match(line);
-                var command = new Command();
-                command.Type = cr.Type;
-                command.Parameters = new string[match.Groups.Count - 1];
-                for (int i = 1; i < match.Groups.Count; i++)
-                    command.Parameters[i - 1] = match.Groups[i].Value;
-                LineNumber = command.BlockParse(LineNumber, Lines); //if command is a block command
-                Commands.Add(command);
+                if(!cr.Skip)
+                { 
+                    var match = cr.RegularExpression.Match(line);
+                    var command = Command.Factory(cr.Type);
+                    command.Type = cr.Type;
+                    command.Parameters = new string[match.Groups.Count - 1];
+                    for (int i = 1; i < match.Groups.Count; i++)
+                        command.Parameters[i - 1] = match.Groups[i].Value;
+                    LineNumber = command.BlockParse(LineNumber, Lines); //if command is a block command
+                    Commands.Add(command);
+                }
                 return true;
             }
 
@@ -141,14 +143,14 @@ namespace Compiler.ConsoleApp
                 {
                     var foundPin = (from p in tpins where p.Name == pin.Name select p).FirstOrDefault();
                     if(foundPin == null)
-                        tpins.Add(foundPin);
+                        tpins.Add(pin);
                 }
 
                 foreach (var wire0 in res.Item2)
                 {
                     var foundWire = (from w in wires where w.Name == wire0.Name select w).FirstOrDefault();
                     if (foundWire == null)
-                        wires.Add(foundWire);
+                        wires.Add(wire0);
                 }
             }
 

@@ -52,6 +52,7 @@
     <Compile Include="MethodTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TruthTableTests.cs" />
+    <Compile Include="CompilerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
